@@ -70,12 +70,18 @@ class ResponseLogger
 
         $dumpFileContent = [
             'request' => [
+                'time' => date("Y-m-d\TH:i:s\Z", $request->server->get('REQUEST_TIME')),
+                'microtime' => $request->server->get('REQUEST_TIME_FLOAT'),
+                'headers' => $request->headers->all(),
+                'server' => $request->server->all(),
                 'uri' => $request->getRequestUri(),
                 'method' => $request->getMethod(),
                 'parameters' => $request->request->all(),
                 'content' => $requestJsonContent ?: $request->getContent(),
             ],
             'response' => [
+                'time' => date("Y-m-d\TH:i:s\Z"),
+                'microtime' => microtime(true),
                 'statusCode' => $response->getStatusCode(),
                 'contentType' => $response->headers->get('Content-Type'),
                 'content' => $responseJsonContent ?: $response->getContent(),
@@ -152,7 +158,7 @@ class ResponseLogger
         $filename = implode($filenameArray, '/');
 
         // Add extension
-        $filename .= '.json';
+        $filename .= '_'.microtime(true).'.json';
 
         return $filename;
     }
